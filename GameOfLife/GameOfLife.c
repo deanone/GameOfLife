@@ -40,10 +40,16 @@ void wait(int seconds)
 
 int main()
 {
+	// Dynamically allocated memory
+	// If statically allocated memory is ok, then use grid[n][m]
+	int *grid[n];
+	for (int i = 0; i < m; i++)
+		grid[i] = (int *)malloc(m * sizeof(int));
+	//int grid[n][m];
+
 	HANDLE  hConsole;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	srand(time(NULL));
-	int grid[n][m];
 
 	// initialize grid with random values. This also can change in the future
 	for (int i = 0; i < n; i++)
@@ -57,7 +63,11 @@ int main()
 	{
 		//for (int k = 0; k < sc; k++)
 		//{
-		int grid_aux[n][m];	// auxiliary grid. It is needed because the state of the cells for the next generation should change SIMULATANEOUSLY for all the cells
+		
+		int *grid_aux[n];
+		for (int i = 0; i < m; i++)
+			grid_aux[i] = (int *)malloc(m * sizeof(int));
+		//int grid_aux[n][m];	// auxiliary grid. It is needed because the state of the cells for the next generation should change SIMULATANEOUSLY for all the cells
 
 		// print the grid
 		for (int i = 0; i < n; i++)
@@ -101,6 +111,10 @@ int main()
 		for (int i = 0; i < n; i++)
 			for (int j = 0; j < m; j++)
 				grid[i][j] = grid_aux[i][j];
+
+		// free memory
+		for (int i = 0; i < n; i++)
+			free(grid_aux[i]);
 
 		ClearScreen();
 		//}
