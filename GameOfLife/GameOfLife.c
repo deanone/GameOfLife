@@ -13,8 +13,8 @@
 #endif
 
 // At this point input is defined as a set of constants. It can change to be given by the user.
-#define n 50
-#define m 50
+#define N 50
+#define M 50
 #define sc 100 // c stands for simulation circles
 
 unsigned int RandInt(unsigned int min, unsigned int max)
@@ -42,9 +42,9 @@ int main()
 {
 	// Dynamically allocated memory
 	// If statically allocated memory is ok, then use grid[n][m]
-	int *grid[n];
-	for (int i = 0; i < m; i++)
-		grid[i] = (int *)malloc(m * sizeof(int));
+	int *grid[N];
+	for (int i = 0; i < M; i++)
+		grid[i] = (int *)malloc(M * sizeof(int));
 	//int grid[n][m];
 
 	HANDLE  hConsole;
@@ -52,9 +52,9 @@ int main()
 	srand(time(NULL));
 
 	// initialize grid with random values. This also can change in the future
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < N; i++)
 	{
-		for (int j = 0; j < m; j++)
+		for (int j = 0; j < M; j++)
 			grid[i][j] = RandInt(0, 1);
 	}
 
@@ -64,15 +64,15 @@ int main()
 		//for (int k = 0; k < sc; k++)
 		//{
 		
-		int *grid_aux[n];
-		for (int i = 0; i < m; i++)
-			grid_aux[i] = (int *)malloc(m * sizeof(int));
+		int *grid_aux[N];
+		for (int i = 0; i < M; i++)
+			grid_aux[i] = (int *)malloc(M * sizeof(int));
 		//int grid_aux[n][m];	// auxiliary grid. It is needed because the state of the cells for the next generation should change SIMULATANEOUSLY for all the cells
 
 		// print the grid
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < N; i++)
 		{
-			for (int j = 0; j < m; j++)
+			for (int j = 0; j < M; j++)
 			{
 				if (grid[i][j] == 1)
 					SetConsoleTextAttribute(hConsole, 2);	// 2: color code for green
@@ -86,9 +86,9 @@ int main()
 		wait(2);
 
 		// iterate through the grid
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < N; i++)
 		{
-			for (int j = 0; j < m; j++)
+			for (int j = 0; j < M; j++)
 			{
 				// iterate through each cell's neighbors
 				unsigned int numOfAliveNeighbors = 0;
@@ -97,7 +97,7 @@ int main()
 					for (int jj = (j - 1); jj <= (j + 1); jj++)
 					{
 						// check bounds
-						if (((ii >= 0) && (ii <= (n - 1))) && ((jj >= 0) && (jj <= (m - 1))))
+						if (((ii >= 0) && (ii <= (N - 1))) && ((jj >= 0) && (jj <= (M - 1))))
 							if (!((ii == i) && (jj == j)) && (grid[ii][jj] == 1)) numOfAliveNeighbors++;
 					}
 				}
@@ -108,12 +108,12 @@ int main()
 		}
 
 		// update grid
-		for (int i = 0; i < n; i++)
-			for (int j = 0; j < m; j++)
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < M; j++)
 				grid[i][j] = grid_aux[i][j];
 
 		// free memory
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < N; i++)
 			free(grid_aux[i]);
 
 		ClearScreen();
