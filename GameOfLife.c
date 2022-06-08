@@ -1,6 +1,3 @@
-// GameOfLife.c : Implementation of the Conway's Game of Life
-// https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
-//
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
@@ -11,27 +8,31 @@
 #include <unistd.h>
 #endif
 
-// At this point input is defined as a set of constants. It can change to be given by the user.
+// At this point input is defined as a set of constants. 
+// TODO: Change it to be given by the user.
 #define N 50
 #define M 50
-#define sc 100 // c stands for simulation circles
+
+// (ANSI) colors
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_WHITE   "\x1b[37m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-unsigned int RandInt(unsigned int min, unsigned int max)
+unsigned int randomInteger(unsigned int minOfRange, unsigned int maxOfRange)
 {
 	double scaled = (double)rand() / RAND_MAX;
-	return (max - min + 1) * scaled + min;
+	return (maxOfRange - minOfRange + 1) * scaled + minOfRange;
 }
 
-void ClearScreen()
+void clearScreen()
 {
 	system("@cls||clear");
 }
 
 void wait(int seconds)
-{   // Pretty crossplatform, both ALL POSIX compliant systems AND Windows
+{   
+// Pretty cross-platform, both for POSIX-compliant systems and Windows
 #ifdef _WIN32
 	Sleep(1000 * seconds);
 #else
@@ -39,17 +40,13 @@ void wait(int seconds)
 #endif
 }
 
-
 int main()
 {
-	// Dynamically allocated memory
-	// If statically allocated memory is ok, then use grid[n][m]
 	int *grid[N];
 	for (int i = 0; i < M; ++i)
 	{
 		grid[i] = (int *)malloc(M * sizeof(int));
 	}
-	//int grid[n][m];
 
 	srand(time(NULL));
 
@@ -58,7 +55,7 @@ int main()
 	{
 		for (int j = 0; j < M; ++j)
 		{
-			grid[i][j] = RandInt(0, 1);
+			grid[i][j] = randomInteger(0, 1);
 		}
 	}
 
@@ -66,15 +63,12 @@ int main()
 	// run simulation
 	for (;;)	// infinite simulation
 	{
-		//for (int k = 0; k < sc; k++)
-		//{
-		
+		// auxiliary grid. It is needed because the state of the cells for the next generation should change SIMULATANEOUSLY for all the cells
 		int *grid_aux[N];
 		for (int i = 0; i < M; ++i)
 		{
 			grid_aux[i] = (int *)malloc(M * sizeof(int));
 		}
-		//int grid_aux[n][m];	// auxiliary grid. It is needed because the state of the cells for the next generation should change SIMULATANEOUSLY for all the cells
 
 		// print the grid
 		for (int i = 0; i < N; ++i)
@@ -83,11 +77,11 @@ int main()
 			{
 				if (grid[i][j] == 1)
 				{
-					printf(ANSI_COLOR_GREEN "*" ANSI_COLOR_RESET " ");
+					printf(ANSI_COLOR_RED "*" ANSI_COLOR_RESET " ");
 				}
 				else
 				{
-					printf(ANSI_COLOR_RED "*" ANSI_COLOR_RESET " ");
+					printf(ANSI_COLOR_WHITE "*" ANSI_COLOR_RESET " ");
 				}
 			}
 			printf("\n");
@@ -121,15 +115,15 @@ int main()
 				}
 				if (numOfAliveNeighbors == 3)
 				{
-					grid_aux[i][j] = 1;
+					grid_aux[i][j] = 1;	// cell comes to life
 				}
 				else if (numOfAliveNeighbors == 2)
 				{
-					grid_aux[i][j] = grid[i][j];
+					grid_aux[i][j] = grid[i][j];	// cell's status remain the same
 				}
 				else
 				{
-					grid_aux[i][j] = 0;
+					grid_aux[i][j] = 0;	// cell dies from overpopulation
 				}
 			}
 		}
@@ -149,11 +143,9 @@ int main()
 			free(grid_aux[i]);
 		}
 
-		ClearScreen();
+		clearScreen();
 		generation++;
-		//}
 	}
 	printf("\n");
     return 0;
 }
-
