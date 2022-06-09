@@ -92,7 +92,7 @@ int main()
 
     wait(1);  // sleep for 1 second
 
-    // iterate through the grid
+    // iterate through the grid to find the number of alive neighbors for each cell
     for (int i = 0; i < N; ++i)
     {
       for (int j = 0; j < M; ++j)
@@ -118,6 +118,7 @@ int main()
           }
         }
 
+        // Rules of the game
         if (grid[i][j] == 1)  // live cell
         {
           if ((numOfAliveNeighbors == 2) || (numOfAliveNeighbors == 3))
