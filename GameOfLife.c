@@ -10,16 +10,13 @@
 
 // At this point input is defined as a set of constants. 
 // TODO: Change it to be given by the user.
-#define N 50
-#define M 50
+#define N 40
+#define M 40
 
 // (ANSI) colors
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_WHITE   "\x1b[37m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
-#define ANSI_COLOR_BOLD_RED "\e[1;31m"
 #define ANSI_COLOR_BOLD_BLACK "\e[1;30m"
+#define ANSI_COLOR_BOLD_WHITE "\e[1;37m"
+#define ANSI_COLOR_RESET "\e[0m"
 
 unsigned int randomInteger(unsigned int minOfRange, unsigned int maxOfRange)
 {
@@ -80,7 +77,7 @@ int main()
       {
         if (grid[i][j] == 1)
         {
-          printf(ANSI_COLOR_BOLD_RED "*" ANSI_COLOR_RESET " ");
+          printf(ANSI_COLOR_BOLD_WHITE "*" ANSI_COLOR_RESET " ");
         }
         else
         {
@@ -93,7 +90,7 @@ int main()
     printf("Generation: %d", generation);
     printf("\n");
 
-    wait(1);
+    wait(1);  // sleep for 1 second
 
     // iterate through the grid
     for (int i = 0; i < N; ++i)
@@ -107,27 +104,45 @@ int main()
           for (int jj = (j - 1); jj <= (j + 1); ++jj)
           {
             // check bounds
+            // TODO: Apply logic for the cells in the boundaries of the grid
             if (((ii >= 0) && (ii <= (N - 1))) && ((jj >= 0) && (jj <= (M - 1))))
             {
-              if (!((ii == i) && (jj == j)) && (grid[ii][jj] == 1)) 
+              if ((ii != i) || (jj != j))
               {
-                numOfAliveNeighbors++;
+                if ((grid[ii][jj] == 1)) 
+                {
+                  numOfAliveNeighbors++;
+                }
               }
             }
           }
         }
-        
-        if (numOfAliveNeighbors == 3)
+
+        if (grid[i][j] == 1)  // live cell
         {
-          grid_aux[i][j] = 1; // cell comes to life
+          if ((numOfAliveNeighbors == 2) || (numOfAliveNeighbors == 3))
+          {
+            grid_aux[i][j] = 1; // cell lives on to the next generation
+          }
+          else if (numOfAliveNeighbors < 2)
+          {
+            grid_aux[i][j] = 0; // cell dies, as if by underpopulation
+          }
+          else  // numOfAliveNeighbors > 3
+          {
+            grid_aux[i][j] = 0; // cell dies, as if by overpopulation
+          }
         }
-        else if (numOfAliveNeighbors == 2)
+        else  // dead cell
         {
-          grid_aux[i][j] = grid[i][j];    // cell's status remain the same
-        }
-        else
-        {
-          grid_aux[i][j] = 0; // cell dies from overpopulation
+          if (numOfAliveNeighbors == 3)
+          {
+            grid_aux[i][j] = 1; // cell revives, as if by reproduction
+          }
+          else
+          {
+            grid_aux[i][j] = 0; // cell stays dead
+          }
         }
       }
     }
