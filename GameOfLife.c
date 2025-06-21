@@ -10,19 +10,14 @@
 
 // At this point input is defined as a set of constants. 
 // TODO: Change it to be given by the user.
-#define N 40
-#define M 40
+#define N 10
+#define M 10
+#define TIME_BETWEEN_GENS 1
 
 // (ANSI) colors
 #define ANSI_COLOR_BOLD_BLACK "\e[1;30m"
 #define ANSI_COLOR_BOLD_WHITE "\e[1;37m"
 #define ANSI_COLOR_RESET "\e[0m"
-
-unsigned int randomInteger(unsigned int minOfRange, unsigned int maxOfRange)
-{
-  double scaled = (double)rand() / RAND_MAX;
-  return (maxOfRange - minOfRange + 1) * scaled + minOfRange;
-}
 
 void clearScreen()
 {
@@ -41,36 +36,31 @@ void wait(int seconds)
 
 int main()
 {
-  int *grid[N];
+  srand(time(NULL));
+
+  // Two grids are needed: primary and auxiliary
+  // The auxiliary grid is needed because the state of the cells
+  // for the next generation must change SIMULATANEOUSLY for all the cells
+  int *grid[N], *grid_aux[N];
   for (int i = 0; i < M; ++i)
   {
     grid[i] = (int *)malloc(M * sizeof(int));
+    grid_aux[i] = (int*)malloc(M * sizeof(int));
   }
-
-  srand(time(NULL));
   
   // initialize grid with random values. This may change in the future
-  for (int i = 0; i < N; i++)
+  for (int i = 0; i < N; ++i)
   {
-    for (int j = 0; j < M; j++)
+    for (int j = 0; j < M; ++j)
     {
-      grid[i][j] = randomInteger(0, 1);
+      grid[i][j] = rand() % 2;
     }
   }
 
   int generation = 0;
-
   // run simulation
-  for (;;)    // infinite simulation (K&R's canonical form)
+  for (;;) // infinite simulation (K&R's canonical form)
   {
-    // auxiliary grid. It is needed because the state of the cells 
-    // for the next generation should change SIMULATANEOUSLY for all the cells
-    int *grid_aux[N];
-    for (int i = 0; i < M; ++i)
-    {
-      grid_aux[i] = (int *)malloc(M * sizeof(int));
-    }
-
     // print the grid
     for (int i = 0; i < N; ++i)
     {
@@ -91,7 +81,7 @@ int main()
     printf("Generation: %d", generation);
     printf("\n");
 
-    wait(1);  // sleep for 1 second
+    wait(TIME_BETWEEN_GENS); // sleep for 1 second
 
     // iterate through the grid to find the number of alive neighbors for each cell
     for (int i = 0; i < N; ++i)
@@ -120,7 +110,7 @@ int main()
         }
 
         // Rules of the game
-        if (grid[i][j] == 1)  // live cell
+        if (grid[i][j] == 1) // alive cell
         {
           if ((numOfAliveNeighbors == 2) || (numOfAliveNeighbors == 3))
           {
@@ -135,7 +125,7 @@ int main()
             grid_aux[i][j] = 0; // cell dies, as if by overpopulation
           }
         }
-        else  // dead cell
+        else // dead cell
         {
           if (numOfAliveNeighbors == 3)
           {
@@ -158,15 +148,17 @@ int main()
       }
     }
 
-    // free memory
-    for (int i = 0; i < N; ++i)
-    {
-      free(grid_aux[i]);
-    }
-
     clearScreen();
     generation++;
   }
   printf("\n");
+
+  // free memory
+  for (int i = 0; i < N; ++i)
+  {
+    free(grid[i]);
+    free(grid_aux[i]);
+  }
+
   return 0;
 }
