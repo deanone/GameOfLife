@@ -61,7 +61,7 @@ int main()
   int generation = 0;
 
   // run simulation
-  for (;;)    // infinite simulation
+  for (;;)    // infinite simulation (K&R's canonical form)
   {
     // auxiliary grid. It is needed because the state of the cells for the next generation should change SIMULATANEOUSLY for all the cells
     int *grid_aux[N];
