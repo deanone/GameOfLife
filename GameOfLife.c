@@ -110,7 +110,7 @@ int main()
             {
               if ((ii != i) || (jj != j))
               {
-                if ((grid[ii][jj] == 1)) 
+                if (grid[ii][jj] == 1) 
                 {
                   numOfAliveNeighbors++;
                 }
